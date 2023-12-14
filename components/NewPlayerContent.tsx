@@ -6,10 +6,16 @@ import Slider from "./Slider";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
+// import { BsPauseFill, BsPlayFill, HiSpeakerWave, HiSpeakerXMark, AiFillStepBackward, AiFillStepForward } from "react-icons/all";
+
 // import PlayerSlider from "./PlayerSlider";
 
 import "./PlayerContent.css";
+
 import { Song } from "@/types";
+import usePlayer from "@/hooks/usePlayer";
+
+import PlayerSlider from "./PlayerSlider";
 
 interface NewPlayerContentProps {
   song: Song;
@@ -20,6 +26,7 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
   song,
   songUrl,
 }) => {
+  const player = usePlayer();
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [seek, setSeek] = useState(0);
@@ -80,28 +87,14 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
 
   const handlePlayPause = () => {
     if (howlRef.current) {
-      if (playing) {
-        howlRef.current.pause();
-      } else {
-        howlRef.current.play();
-      }
+      setPlaying(!playing);
+      playing ? howlRef.current.pause() : howlRef.current.play();
+
     }
   };
 
   const toggleMute = () => {
-    if (volume === 0) {
-      setVolume(0.5);
-    } else {
-      setVolume(0);
-    }
-  };
-
-  const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSeek = parseFloat(e.target.value);
-    setSeek(newSeek);
-    if (howlRef.current) {
-      howlRef.current.seek(newSeek);
-    }
+    setVolume(volume === 0 ? 0.5 : 0);
   };
 
   const formatTime = (seconds: number): string => {
@@ -112,52 +105,50 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
     ).padStart(2, "0")}`;
   };
 
+  const onPlayNext = () => {
+    if (player.ids.length === 0) {
+      return;
+    }
+
+    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
+    const nextSong = player.ids[currentIndex + 1];
+
+    if (!nextSong) {
+      return player.setId(player.ids[0]);
+    }
+
+    player.setId(nextSong);
+  }
+
+  const onPlayPrevious = () => {
+    if (player.ids.length === 0) {
+      return;
+    }
+
+    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
+    const previousSong = player.ids[currentIndex - 1];
+
+    if (!previousSong) {
+      return player.setId(player.ids[player.ids.length - 1]);
+    }
+
+    player.setId(previousSong);
+  }
+
   return (
     <div className="relative">
       {/* Seeker */}
       <div className="x-slider flex relative h-1.5 w-full -top-4 -left-4">
-        <input
-          className=" bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none
-          [&::-webkit-slider-thumb]:w-2.5
-[&::-webkit-slider-thumb]:h-2.5
-[&::-webkit-slider-thumb]:-mt-1.5
-[&::-webkit-slider-thumb]:appearance-none
-[&::-webkit-slider-thumb]:bg-white
-[&::-webkit-slider-thumb]:shadow-[0_0_0_4px_rgba(37,99,235,1)]
-[&::-webkit-slider-thumb]:rounded-full
-[&::-webkit-slider-thumb]:transition-all
-[&::-webkit-slider-thumb]:duration-150
-[&::-webkit-slider-thumb]:ease-in-out
-[&::-webkit-slider-thumb]:dark:bg-slate-700
-
-[&::-moz-range-thumb]:w-2.5
-[&::-moz-range-thumb]:h-2.5
-[&::-moz-range-thumb]:appearance-none
-[&::-moz-range-thumb]:bg-white
-[&::-moz-range-thumb]:border-4
-[&::-moz-range-thumb]:border-blue-600
-[&::-moz-range-thumb]:rounded-full
-[&::-moz-range-thumb]:transition-all
-[&::-moz-range-thumb]:duration-150
-[&::-moz-range-thumb]:ease-in-out
-
-[&::-webkit-slider-runnable-track]:w-full
-[&::-webkit-slider-runnable-track]:h-2
-[&::-webkit-slider-runnable-track]:bg-green-500
-[&::-webkit-slider-runnable-track]:rounded-full
-[&::-webkit-slider-runnable-track]:dark:bg-gray-700
-
-[&::-moz-range-track]:w-full
-[&::-moz-range-track]:h-2
-[&::-moz-range-track]:bg-gray-100
-[&::-moz-range-track]:rounded-full
-          seeker-slider transition-all delay-200 ease-linear absolute z-50 w-full h-1.5 rounded-md bg-green-600 bg-gradient-to-r from-emerald-700 to-green-500"
-          type="range"
-          min={0}
-          max={howlRef.current ? howlRef.current?.duration() : 1}
-          step={1}
+        {/*Add Player Slider */}
+        <PlayerSlider
           value={seek}
-          onChange={handleSeekChange}
+          duration={howlRef.current?.duration() || 0}
+          onChange={(value) => {
+            if (howlRef.current) {
+              howlRef.current.seek(value);
+              setSeek(value);
+            }
+          }}
         />
       </div>
 
@@ -166,7 +157,7 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
         {/* Current Time */}
         <div className="text-gray-500/90 text-sm select-none">
           <span>
-            {formatTime(elapsed) === "NaN:NaN" ? "00:00" : formatTime(elapsed)}
+            {formatTime(howlRef.current?.seek() || 0)}
           </span>
         </div>
 
@@ -181,7 +172,7 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
 
       {/* Control Buttons */}
       <div className="flex absolute top-2 z-50 left-[40%] justify-evenly w-1/5 text-xl control-buttons">
-        <button onClick={handlePlayPause}>
+        <button onClick={onPlayPrevious}>
           <AiFillStepBackward />
         </button>
         <button
@@ -190,7 +181,7 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
         >
           <Icon />
         </button>
-        <button onClick={handlePlayPause}>
+        <button onClick={onPlayNext}>
           <AiFillStepForward />
         </button>
       </div>

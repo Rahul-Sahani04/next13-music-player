@@ -8,6 +8,7 @@ interface SlideProps {
   onChange?: (value: number) => void;
 }
 
+
 const PlayerSlider: React.FC<SlideProps> = ({ 
   value = 0, 
   duration,
@@ -42,6 +43,7 @@ const PlayerSlider: React.FC<SlideProps> = ({
           grow 
           rounded-full 
           h-[3px]
+          -top-5
         "
       >
         <RadixSlider.Range 
