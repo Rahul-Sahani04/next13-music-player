@@ -8,8 +8,6 @@ import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 // import { BsPauseFill, BsPlayFill, HiSpeakerWave, HiSpeakerXMark, AiFillStepBackward, AiFillStepForward } from "react-icons/all";
 
-// import PlayerSlider from "./PlayerSlider";
-
 import "./PlayerContent.css";
 
 import { Song } from "@/types";
@@ -89,7 +87,6 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
     if (howlRef.current) {
       setPlaying(!playing);
       playing ? howlRef.current.pause() : howlRef.current.play();
-
     }
   };
 
@@ -118,7 +115,7 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
     }
 
     player.setId(nextSong);
-  }
+  };
 
   const onPlayPrevious = () => {
     if (player.ids.length === 0) {
@@ -133,13 +130,12 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
     }
 
     player.setId(previousSong);
-  }
+  };
 
   return (
     <div className="relative">
       {/* Seeker */}
       <div className="x-slider flex relative h-1.5 w-full -top-4 -left-4">
-        {/*Add Player Slider */}
         <PlayerSlider
           value={seek}
           duration={howlRef.current?.duration() || 0}
@@ -156,12 +152,9 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
       <div className="relative -top-3 flex flex-row flex-grow justify-start px-0.5">
         {/* Current Time */}
         <div className="text-gray-500/90 text-sm select-none">
-          <span>
-            {formatTime(howlRef.current?.seek() || 0)}
-          </span>
+          <span>{formatTime(howlRef.current?.seek() || 0)}</span>
         </div>
 
-        {/* Grow Space */}
         <div className="grow"></div>
 
         {/* Total Time */}
