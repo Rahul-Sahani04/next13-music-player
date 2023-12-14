@@ -133,56 +133,79 @@ const NewPlayerContent: React.FC<NewPlayerContentProps> = ({
   };
 
   return (
-    <div className="relative">
-      {/* Seeker */}
-      <div className="x-slider flex relative h-1.5 w-full -top-4 -left-4">
-        <PlayerSlider
-          value={seek}
-          duration={howlRef.current?.duration() || 0}
-          onChange={(value) => {
-            if (howlRef.current) {
-              howlRef.current.seek(value);
-              setSeek(value);
+    <div className="relative grid grid-cols-3 ">
+      <div className="relative w-full flex items-center justify-start">
+        <div className="w-16 rounded-md flex ">
+          <img
+            src={
+              "https://kwjoxwvgneapgyyvfzvg.supabase.co/storage/v1/object/public/images/" +
+              song.image_path
             }
-          }}
-        />
-      </div>
-
-      {/* Duration Container */}
-      <div className="relative -top-3 flex flex-row flex-grow justify-start px-0.5">
-        {/* Current Time */}
-        <div className="text-gray-500/90 text-sm select-none">
-          <span>{formatTime(howlRef.current?.seek() || 0)}</span>
+          />
         </div>
-
-        <div className="grow"></div>
-
-        {/* Total Time */}
-        <div className="text-gray-400/90 text-sm select-none pr-1">
-          <span>{formatTime(howlRef.current?.duration() || 0)}</span>
+        <div className="ml-4">
+          <p className="font-sans text-base">{song.title}</p>
+          <p className="font-sans text-gray-400 text-xs">{song.author}</p>
         </div>
       </div>
+      {/* Seeker */}
+      <div className=" flex relative h-1.5 w-full ">
+        <div>
+          {/* Control Buttons */}
+          <div className="flex absolute  z-50 justify-evenly w-full text-xl control-buttons">
+            <button
+              onClick={onPlayPrevious}
+              className="opacity-40 hover:scale-110 hover:opacity-100 transition-all delay-200 ease-linear"
+            >
+              <AiFillStepBackward />
+            </button>
+            <button
+              className="hover:scale-110 text-2xl backdrop-blur-md bg-green-500 border-black rounded-full flex justify-center items-center w-10 h-10 transition-all delay-200 ease-linear"
+              onClick={handlePlayPause}
+            >
+              <Icon />
+            </button>
+            <button
+              onClick={onPlayNext}
+              className="opacity-40 hover:scale-110 hover:opacity-100 transition-all delay-200 ease-linear"
+            >
+              <AiFillStepForward />
+            </button>
+          </div>
+          {/* Duration Container */ }
+          <div className="w-full absolute flex justify-center items-center top-12">
+            <div className="relative  flex flex-row flex-grow justify-start  px-0.5">
+              {/* Current Time */}
+              <div className="text-gray-500/90 text-sm select-none">
+                <span>{formatTime(howlRef.current?.seek() || 0)}</span>
+              </div>
 
-      {/* Control Buttons */}
-      <div className="flex absolute top-2 z-50 left-[40%] justify-evenly w-1/5 text-xl control-buttons">
-        <button onClick={onPlayPrevious}>
-          <AiFillStepBackward />
-        </button>
-        <button
-          className="text-2xl backdrop-blur-md bg-green-500 border-black rounded-full flex justify-center items-center w-10 h-10"
-          onClick={handlePlayPause}
-        >
-          <Icon />
-        </button>
-        <button onClick={onPlayNext}>
-          <AiFillStepForward />
-        </button>
+              <div className="grow m-1 flex justify-center items-center">
+                <PlayerSlider
+                  value={seek}
+                  duration={howlRef.current?.duration() || 0}
+                  onChange={(value) => {
+                    if (howlRef.current) {
+                      howlRef.current.seek(value);
+                      setSeek(value);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Total Time */}
+              <div className="text-gray-400/90 text-sm select-none pr-1">
+                <span>{formatTime(howlRef.current?.duration() || 0)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Volume Control */}
       <div className="relative -top-2 hidden md:flex w-full justify-end pr-2">
-        <div className="flex items-center gap-x-2 w-[120px] cursor-pointer">
-          <VolumeIcon onClick={toggleMute} />{" "}
+        <div className="flex items-center gap-x-2 w-[120px] ">
+          <VolumeIcon onClick={toggleMute} className="cursor-pointer"/>{" "}
           <Slider value={volume} onChange={(value) => setVolume(value)} />
         </div>
       </div>

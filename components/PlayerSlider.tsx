@@ -28,6 +28,8 @@ const PlayerSlider: React.FC<SlideProps> = ({
         touch-none 
         w-full 
         h-10
+        cursor-pointer
+        top-[6px]
       "
       defaultValue={[0]}
       value={[value]}

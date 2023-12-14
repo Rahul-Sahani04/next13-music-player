@@ -18,6 +18,7 @@ const Slider: React.FC<SlideProps> = ({
   return ( 
     <RadixSlider.Root
       className="
+      cursor-pointer
         relative 
         flex 
         items-center 
