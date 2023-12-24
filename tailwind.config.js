@@ -7,6 +7,17 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        // 'currentBgTheme': "#2B2B2B",
+        'currentBgTheme': "#09090B",
+        'secondaryBgTheme': "#212123",
+        'borderColors': '#C5C5C5',
+        'white': '#FFF',
+        'black': '#000'
+      },
+      animation: {
+        'spin-slow': 'spin 16s linear infinite',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

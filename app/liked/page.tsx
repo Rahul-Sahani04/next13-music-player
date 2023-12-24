@@ -13,7 +13,7 @@ const Liked = async () => {
   return (
     <div 
       className="
-        bg-neutral-900 
+        bg-currentBgTheme 
         rounded-lg 
         h-full 
         w-full 
@@ -32,7 +32,7 @@ const Liked = async () => {
               gap-x-5
             "
           >
-            <div className="relative h-32 w-32 lg:h-44 lg:w-44">
+            <div className="relative h-32 w-32 lg:h-44 lg:w-44 border-solid border-4 rounded-md border-zinc-200">
               <Image
                 className="object-cover"
                 fill

@@ -22,6 +22,10 @@ const SongItem: React.FC<SongItemProps> = ({
     <div
       onClick={() => onClick(data.id)} 
       className="
+      border-solid
+        border-2
+        border-black
+
         relative 
         group 
         flex 
@@ -31,7 +35,7 @@ const SongItem: React.FC<SongItemProps> = ({
         rounded-md 
         overflow-hidden 
         gap-x-4 
-        bg-neutral-400/5 
+        bg-secondaryBgTheme
         cursor-pointer 
         hover:bg-neutral-400/10 
         transition 
